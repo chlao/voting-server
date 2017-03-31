@@ -3,7 +3,8 @@ import {List, Map} from 'immutable';
 export const INITIAL_STATE = Map();
 
 export function setEntries(state, entries){
-  return state.set("entries", List(entries));
+  return state.set("entries", List(entries))
+              .set("originalEntries", List(entries));
 }
 
 function getWinners(vote){
@@ -61,4 +62,11 @@ export function vote(voteState, entry, clientId){
     );
   }
   return voteState;
+}
+
+export function resetVotes(state){
+  return state.remove('vote')
+              .remove('myVote')
+              .remove('winner')
+              .set('entries', state.get('originalEntries'));
 }
