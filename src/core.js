@@ -36,9 +36,25 @@ export function next(state){
   });
 }
 
-export function vote(voteState, entry){
+function updateUserVote(voteState, entry, clientId){
+  const updatedUserVotes = voteState.setIn(['votes', clientId], entry);
+  const prevVote = voteState.getIn(['votes', clientId])
+  if (prevVote){
+    return updatedUserVotes.updateIn(
+      ['tally', prevVote],
+      0,
+      tally => tally - 1
+    );
+  }
+
+  return updatedUserVotes;
+}
+
+export function vote(voteState, entry, clientId){
   if (voteState.get('pair').includes(entry)){
-    return voteState.updateIn(
+    var updatedUserVotes = updateUserVote(voteState, entry, clientId);
+
+    return updatedUserVotes.updateIn(
       ['tally', entry],
       0,
       tally => tally + 1
